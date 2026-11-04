@@ -1,0 +1,38 @@
+# ============================================================
+# Dual-Engine RAG — Development Services (PostgreSQL + ChromaDB)
+# Usage: docker compose -f docker-compose.services.yml up -d
+# ============================================================
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: dual-engine-rag-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nexusrag
+    ports:
+      - "5433:5432"
+    volumes:
+      - dual_engine_rag_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    platform: linux/amd64
+    image: chromadb/chroma:latest
+    container_name: dual-engine-rag-chromadb
+    ports:
+      - "8002:8000"
+    volumes:
+      - dual_engine_rag_chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+
+volumes:
+  dual_engine_rag_postgres_data:
+  dual_engine_rag_chroma_data:

@@ -1,0 +1,98 @@
+# ============================================================
+# Dual-Engine RAG — Full Stack Production Deployment
+# Usage: cp .env.example .env && docker compose up -d
+# ============================================================
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: dual-engine-rag-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nexusrag
+    ports:
+      - "5433:5432"
+    volumes:
+      - dual_engine_rag_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    platform: linux/amd64
+    image: chromadb/chroma:latest
+    container_name: dual-engine-rag-chromadb
+    ports:
+      - "8002:8000"
+    volumes:
+      - dual_engine_rag_chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dual-engine-rag-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/nexusrag
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+    volumes:
+      - dual_engine_rag_uploads:/app/backend/uploads
+      - dual_engine_rag_data:/app/backend/data
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: dual-engine-rag-mcp-server
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      API_BASE_URL: http://backend:8080/api/v1
+      TRANSPORT: http
+      PORT: "8000"
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dual-engine-rag-frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "5174:80"
+    restart: unless-stopped
+
+volumes:
+  dual_engine_rag_postgres_data:
+  dual_engine_rag_chroma_data:
+  dual_engine_rag_uploads:
+  dual_engine_rag_data:

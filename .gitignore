@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+venv/
+.venv/
+.pytest_cache/
+.coverage
+
+# Environment & Secrets
+.env
+frontend/.env
+*.local
+
+# Node & Frontend Build
+node_modules/
+dist/
+.eslintcache
+
+# Runtime Datastores & Local Caches
+chroma_data/
+nexusrag.db
+backend/data/docling/*
+!backend/data/docling/.gitkeep
+backend/data/lightrag/*
+!backend/data/lightrag/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Archives, Logs & Misc
+*.zip
+*.tar.gz
+*.log
+screenlog/
+.DS_Store
+Thumbs.db
+showcase/demo_nexus_video.mkv
+CLAUDE.md
+.gstack/
+/scripts/
