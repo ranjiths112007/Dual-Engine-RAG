@@ -65,6 +65,10 @@ Dual-Engine RAG solves this with a multi-stage pipeline:
 3. **Cross-Encoder Reranking**: Uses `BAAI/bge-reranker-v2-m3` to score and distill candidates, eliminating noisy context and maximizing context utilization.
 4. **Agentic Streaming Synthesis**: Streams real-time tokens with timeline reasoning indicators and verifiable 4-character citation badges (`[c:xxxx]`) linked to source documents and page numbers.
 
+<div align="center">
+  <img src="showcase/Dual-Engine%20RAG%20Architecture%20Infographic%20(1).png" alt="Dual-Engine RAG System Overview" width="950px" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</div>
+
 ---
 
 ## 🚀 Key Features
@@ -149,7 +153,7 @@ Dual-Engine RAG solves this with a multi-stage pipeline:
 ```
 
 <div align="center">
-  <img src="showcase/nexusrag_architecture.jpg" alt="Dual-Engine RAG Architecture" width="850px" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="showcase/Dual-Engine%20RAG%20Architecture%20Infographic.png" alt="Dual-Engine RAG Architecture" width="950px" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 </div>
 
 ---
@@ -159,8 +163,8 @@ Dual-Engine RAG solves this with a multi-stage pipeline:
 Dual-Engine RAG has been rigorously benchmarked using both rule-based test suites and **Ragas LLM-as-a-judge** methodologies on bilingual multi-document corpora:
 
 <div align="center">
-  <img src="showcase/eval_ragas_comparison.png" alt="Ragas Comparison" width="48%" style="border-radius: 6px;" />
-  <img src="showcase/eval_phase1.png" alt="Phase 1 Evaluation" width="48%" style="border-radius: 6px;" />
+  <img src="showcase/Dual-Engine%20RAG%20Evaluation%20Chart.png" alt="Dual-Engine RAG Evaluation Chart" width="49%" style="border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="showcase/Dual-Engine%20RAG%20Performance%20Dashboard.png" alt="Dual-Engine RAG Performance Dashboard" width="49%" style="border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 </div>
 
 ### Benchmark Results Summary
