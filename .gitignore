@@ -21,6 +21,8 @@ dist/
 # Runtime Datastores & Local Caches
 chroma_data/
 nexusrag.db
+dual_engine_rag.db
+*.db
 backend/data/docling/*
 !backend/data/docling/.gitkeep
 backend/data/lightrag/*
@@ -39,3 +41,4 @@ showcase/demo_nexus_video.mkv
 CLAUDE.md
 .gstack/
 /scripts/
+trash/
