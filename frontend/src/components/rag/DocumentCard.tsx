@@ -26,6 +26,7 @@ const FILE_TYPE_CONFIG: Record<string, { icon: typeof FileText; color: string }>
   pdf:  { icon: FileText, color: "text-red-400" },
   docx: { icon: FileType, color: "text-blue-400" },
   pptx: { icon: Presentation, color: "text-orange-400" },
+  ppt:  { icon: Presentation, color: "text-orange-400" },
   txt:  { icon: FileCode, color: "text-muted-foreground" },
   md:   { icon: Hash, color: "text-purple-400" },
 };

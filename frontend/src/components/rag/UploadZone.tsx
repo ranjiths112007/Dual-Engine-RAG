@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const ACCEPTED_TYPES = ".pdf,.txt,.docx,.md,.pptx";
-const ACCEPTED_EXTENSIONS = new Set(["pdf", "txt", "docx", "md", "pptx"]);
+const ACCEPTED_TYPES = ".pdf,.txt,.docx,.md,.pptx,.ppt";
+const ACCEPTED_EXTENSIONS = new Set(["pdf", "txt", "docx", "md", "pptx", "ppt"]);
 const MAX_SIZE_MB = 50;
 
 interface UploadZoneProps {
