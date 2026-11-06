@@ -64,7 +64,8 @@ def _generate_citation_id(existing: set[str]) -> str:
 
 router = APIRouter(prefix="/rag", tags=["rag"])
 
-UPLOAD_DIR = "uploads"
+from app.core.config import settings
+UPLOAD_DIR = settings.BASE_DIR / "uploads"
 
 # Prompt constants — see chat_prompt.py for full documentation
 from app.api.chat_prompt import DEFAULT_SYSTEM_PROMPT, HARD_SYSTEM_PROMPT

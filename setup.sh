@@ -109,7 +109,7 @@ if [ "$HAS_DOCKER" = true ]; then
     docker compose -f docker-compose.services.yml up -d
     echo "  Waiting for PostgreSQL to be ready..."
     for i in $(seq 1 30); do
-        if docker exec dual-engine-rag-postgres pg_isready -U postgres &>/dev/null || docker exec nexusrag-postgres pg_isready -U postgres &>/dev/null; then
+        if docker exec dual-engine-rag-postgres pg_isready -U postgres &>/dev/null; then
             echo "  PostgreSQL ready."
             break
         fi

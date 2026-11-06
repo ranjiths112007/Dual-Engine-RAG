@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: nexusrag
+      POSTGRES_DB: dual_engine_rag
     ports:
       - "5433:5432"
     volumes:
@@ -45,7 +45,7 @@ services:
         condition: service_started
     env_file: .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/nexusrag
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/dual_engine_rag
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
     volumes:
