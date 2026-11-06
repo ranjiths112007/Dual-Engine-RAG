@@ -196,6 +196,7 @@ class GeminiLLMProvider(LLMProvider):
             config.system_instruction = system_prompt
         if tools:
             config.tools = tools
+            config.automatic_function_calling = types.AutomaticFunctionCallingConfig(disable=True)
 
         use_think = think and self.supports_thinking()
         if use_think:
