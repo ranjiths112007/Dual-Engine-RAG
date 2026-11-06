@@ -26,7 +26,7 @@ from app.services.models.parsed_document import (
 logger = logging.getLogger(__name__)
 
 # File extensions handled by Docling vs legacy
-_DOCLING_EXTENSIONS = {".pdf", ".docx", ".pptx", ".html"}
+_DOCLING_EXTENSIONS = {".pdf", ".docx", ".pptx", ".ppt", ".html"}
 _LEGACY_EXTENSIONS = {".txt", ".md"}
 
 

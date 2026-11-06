@@ -77,20 +77,57 @@ def load_markdown_file(file_path: Path) -> LoadedDocument:
     )
 
 
+def load_pptx_file(file_path: Path) -> LoadedDocument:
+    """Load a PPT/PPTX presentation using python-pptx."""
+    try:
+        from pptx import Presentation
+        prs = Presentation(str(file_path))
+        slides_text = []
+        for i, slide in enumerate(prs.slides):
+            slide_parts = []
+            for shape in slide.shapes:
+                if shape.has_text_frame:
+                    for paragraph in shape.text_frame.paragraphs:
+                        text = paragraph.text.strip()
+                        if text:
+                            slide_parts.append(text)
+            if slide_parts:
+                slides_text.append(f"## Slide {i+1}\n" + "\n".join(slide_parts))
+        content = "\n\n".join(slides_text)
+        return LoadedDocument(
+            content=content,
+            source=str(file_path),
+            file_type="pptx",
+            page_count=len(prs.slides) or 1,
+        )
+    except Exception as e:
+        logger.error(f"Error loading PPTX {file_path}: {e}")
+        raise ValueError(f"Failed to load presentation: {e}")
+
+
+def load_docx_file(file_path: Path) -> LoadedDocument:
+    """Load a DOCX document using docx."""
+    try:
+        import docx
+        doc = docx.Document(str(file_path))
+        paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
+        content = "\n\n".join(paragraphs)
+        return LoadedDocument(
+            content=content,
+            source=str(file_path),
+            file_type="docx",
+            page_count=1,
+        )
+    except Exception as e:
+        logger.error(f"Error loading DOCX {file_path}: {e}")
+        raise ValueError(f"Failed to load DOCX: {e}")
+
+
 def load_document(file_path: str | Path) -> LoadedDocument:
     """
     Load a document based on its file type.
 
-    Supported formats: .txt, .pdf, .md
-
-    Args:
-        file_path: Path to the document file
-
-    Returns:
-        LoadedDocument with content and metadata
-
-    Raises:
-        ValueError: If file type is not supported or file cannot be read
+    Supported formats: .txt, .pdf, .md, .docx, .pptx, .ppt
     """
     path = Path(file_path)
 
@@ -103,6 +140,9 @@ def load_document(file_path: str | Path) -> LoadedDocument:
         ".txt": load_txt_file,
         ".pdf": load_pdf_file,
         ".md": load_markdown_file,
+        ".docx": load_docx_file,
+        ".pptx": load_pptx_file,
+        ".ppt": load_pptx_file,
     }
 
     loader = loaders.get(suffix)
@@ -114,4 +154,4 @@ def load_document(file_path: str | Path) -> LoadedDocument:
 
 def get_supported_extensions() -> list[str]:
     """Return list of supported file extensions."""
-    return [".txt", ".pdf", ".md"]
+    return [".txt", ".pdf", ".md", ".docx", ".pptx", ".ppt"]
