@@ -55,8 +55,9 @@ class Settings(BaseSettings):
     DUAL_ENGINE_RAG_ENABLED: bool = Field(default=True, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLED", "NEXUSRAG_ENABLED"))
     DUAL_ENGINE_RAG_ENABLE_KG: bool = Field(default=True, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_KG", "NEXUSRAG_ENABLE_KG"))
     DUAL_ENGINE_RAG_ENABLE_IMAGE_EXTRACTION: bool = Field(default=True, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_IMAGE_EXTRACTION", "NEXUSRAG_ENABLE_IMAGE_EXTRACTION"))
-    DUAL_ENGINE_RAG_ENABLE_IMAGE_CAPTIONING: bool = Field(default=True, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_IMAGE_CAPTIONING", "NEXUSRAG_ENABLE_IMAGE_CAPTIONING"))
-    DUAL_ENGINE_RAG_ENABLE_TABLE_CAPTIONING: bool = Field(default=True, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_TABLE_CAPTIONING", "NEXUSRAG_ENABLE_TABLE_CAPTIONING"))
+    DUAL_ENGINE_RAG_ENABLE_IMAGE_CAPTIONING: bool = Field(default=False, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_IMAGE_CAPTIONING", "NEXUSRAG_ENABLE_IMAGE_CAPTIONING"))
+    DUAL_ENGINE_RAG_ENABLE_TABLE_CAPTIONING: bool = Field(default=False, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_TABLE_CAPTIONING", "NEXUSRAG_ENABLE_TABLE_CAPTIONING"))
+    DUAL_ENGINE_RAG_ENABLE_OCR: bool = Field(default=False, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_OCR", "NEXUSRAG_ENABLE_OCR"))
     DUAL_ENGINE_RAG_MAX_TABLE_MARKDOWN_CHARS: int = Field(default=8000, validation_alias=AliasChoices("DUAL_ENGINE_RAG_MAX_TABLE_MARKDOWN_CHARS", "NEXUSRAG_MAX_TABLE_MARKDOWN_CHARS"))
     DUAL_ENGINE_RAG_CHUNK_MAX_TOKENS: int = Field(default=512, validation_alias=AliasChoices("DUAL_ENGINE_RAG_CHUNK_MAX_TOKENS", "NEXUSRAG_CHUNK_MAX_TOKENS"))
     DUAL_ENGINE_RAG_KG_QUERY_TIMEOUT: float = Field(default=30.0, validation_alias=AliasChoices("DUAL_ENGINE_RAG_KG_QUERY_TIMEOUT", "NEXUSRAG_KG_QUERY_TIMEOUT"))
@@ -74,8 +75,8 @@ class Settings(BaseSettings):
     DUAL_ENGINE_RAG_MAX_IMAGES_PER_DOC: int = Field(default=50, validation_alias=AliasChoices("DUAL_ENGINE_RAG_MAX_IMAGES_PER_DOC", "NEXUSRAG_MAX_IMAGES_PER_DOC"))
     DUAL_ENGINE_RAG_ENABLE_FORMULA_ENRICHMENT: bool = Field(default=True, validation_alias=AliasChoices("DUAL_ENGINE_RAG_ENABLE_FORMULA_ENRICHMENT", "NEXUSRAG_ENABLE_FORMULA_ENRICHMENT"))
 
-    # Document Parser provider: "docling" (default) or "marker"
-    DUAL_ENGINE_RAG_DOCUMENT_PARSER: str = Field(default="docling", validation_alias=AliasChoices("DUAL_ENGINE_RAG_DOCUMENT_PARSER", "NEXUSRAG_DOCUMENT_PARSER"))
+    # Document Parser provider: "fast" (default, sub-second), "docling", or "marker"
+    DUAL_ENGINE_RAG_DOCUMENT_PARSER: str = Field(default="fast", validation_alias=AliasChoices("DUAL_ENGINE_RAG_DOCUMENT_PARSER", "NEXUSRAG_DOCUMENT_PARSER"))
     DUAL_ENGINE_RAG_MARKER_USE_LLM: bool = Field(default=False, validation_alias=AliasChoices("DUAL_ENGINE_RAG_MARKER_USE_LLM", "NEXUSRAG_MARKER_USE_LLM"))
 
     # Processing timeout (minutes) — stale documents auto-recover to FAILED
@@ -153,6 +154,10 @@ class Settings(BaseSettings):
     @property
     def NEXUSRAG_ENABLE_FORMULA_ENRICHMENT(self) -> bool:
         return self.DUAL_ENGINE_RAG_ENABLE_FORMULA_ENRICHMENT
+
+    @property
+    def NEXUSRAG_ENABLE_OCR(self) -> bool:
+        return self.DUAL_ENGINE_RAG_ENABLE_OCR
 
     @property
     def NEXUSRAG_DOCUMENT_PARSER(self) -> str:

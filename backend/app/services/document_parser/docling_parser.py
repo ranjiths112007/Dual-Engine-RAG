@@ -63,6 +63,7 @@ class DoclingDocumentParser(BaseDocumentParser):
         from docling.datamodel.pipeline_options import PdfPipelineOptions
 
         pipeline_options = PdfPipelineOptions()
+        pipeline_options.do_ocr = getattr(settings, "DUAL_ENGINE_RAG_ENABLE_OCR", False)
         pipeline_options.generate_picture_images = settings.DUAL_ENGINE_RAG_ENABLE_IMAGE_EXTRACTION
         pipeline_options.images_scale = settings.DUAL_ENGINE_RAG_DOCLING_IMAGES_SCALE
         pipeline_options.do_formula_enrichment = settings.DUAL_ENGINE_RAG_ENABLE_FORMULA_ENRICHMENT

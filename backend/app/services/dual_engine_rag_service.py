@@ -232,22 +232,18 @@ class DualEngineRAGService:
                 await asyncio.to_thread(_index_sync)
                 chunk_count = len(parsed.chunks)
 
-            # KG ingest (async, non-blocking failure)
-            if self.kg_service and parsed.markdown:
-                try:
-                    await self.kg_service.ingest(parsed.markdown)
-                except Exception as e:
-                    logger.error(
-                        f"KG ingest failed for document {document_id}, "
-                        f"continuing without KG: {e}"
-                    )
-
-            # Phase 3: INDEXED
+            # Phase 3: INDEXED — mark document ready immediately so search and chat are accessible!
             elapsed_ms = int((time.time() - start_time) * 1000)
             document.status = DocumentStatus.INDEXED
             document.chunk_count = chunk_count
             document.processing_time_ms = elapsed_ms
             await self.db.commit()
+
+            # KG ingest runs in background task — does not block document readiness or UI
+            if self.kg_service and parsed.markdown:
+                asyncio.create_task(
+                    self._run_kg_ingest_background(document_id, parsed.markdown)
+                )
 
             logger.info(
                 f"Dual-Engine RAG processed document {document_id}: "
@@ -262,6 +258,18 @@ class DualEngineRAGService:
             document.error_message = str(e)[:500]
             await self.db.commit()
             raise
+
+    async def _run_kg_ingest_background(self, document_id: int, markdown: str) -> None:
+        """Run KG entity/relation extraction in the background without blocking document readiness."""
+        try:
+            logger.info(f"Starting background KG graph construction for document {document_id}...")
+            await self.kg_service.ingest(markdown)
+            logger.info(f"Background KG graph construction completed for document {document_id}")
+        except Exception as e:
+            logger.warning(
+                f"Background KG ingest failed for document {document_id}, "
+                f"continuing with vector store: {e}"
+            )
 
     # ------------------------------------------------------------------
     # Querying

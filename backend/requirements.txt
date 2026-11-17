@@ -17,7 +17,10 @@ chromadb>=0.4.22
 # Embeddings & reranking
 sentence-transformers>=2.2.2
 
-# Document parsing (Docling — default)
+# Document parsing (Fast / native)
+pypdf>=4.0.0
+
+# Document parsing (Docling)
 docling>=2.0.0
 
 # Document parsing (Marker — alternative, better math/formula, lighter GPU)

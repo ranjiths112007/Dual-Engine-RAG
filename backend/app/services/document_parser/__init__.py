@@ -28,15 +28,27 @@ def get_document_parser(
 
     provider = settings.DUAL_ENGINE_RAG_DOCUMENT_PARSER.lower()
 
+    if provider in ("fast", "pypdf", "quick"):
+        from app.services.document_parser.fast_parser import FastDocumentParser
+
+        return FastDocumentParser(workspace_id, output_dir)
+
     if provider == "marker":
         from app.services.document_parser.marker_parser import MarkerDocumentParser
 
         return MarkerDocumentParser(workspace_id, output_dir)
 
-    # Default: docling
-    from app.services.document_parser.docling_parser import DoclingDocumentParser
+    # Default: docling with graceful fallback to fast parser
+    try:
+        from app.services.document_parser.docling_parser import DoclingDocumentParser
 
-    return DoclingDocumentParser(workspace_id, output_dir)
+        return DoclingDocumentParser(workspace_id, output_dir)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Docling unavailable ({e}), using FastDocumentParser")
+        from app.services.document_parser.fast_parser import FastDocumentParser
+
+        return FastDocumentParser(workspace_id, output_dir)
 
 
 __all__ = [

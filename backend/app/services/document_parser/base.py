@@ -108,7 +108,8 @@ class BaseDocumentParser(ABC):
             logger.warning("LLM provider does not support vision — skipping image captioning")
             return
 
-        for img in images:
+        # Limit captioning to top 10 images to avoid long delays and rate limits
+        for img in images[:10]:
             if img.caption:
                 continue
             try:
@@ -138,7 +139,8 @@ class BaseDocumentParser(ABC):
 
         provider = get_llm_provider()
 
-        for tbl in tables:
+        # Limit captioning to top 10 tables to avoid long delays
+        for tbl in tables[:10]:
             if tbl.caption:
                 continue
             try:
