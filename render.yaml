@@ -11,7 +11,7 @@ databases:
   - name: dual-engine-rag-db
     databaseName: dual_engine_rag
     user: dual_engine_user
-    plan: starter # Render free database expires after 30 days; starter ($7/mo) is persistent
+    plan: free # Render free tier database
 
 services:
   # ------------------------------------------------------------
@@ -22,7 +22,7 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile.backend
     dockerContext: .
-    plan: starter # 2GB RAM minimum for embedding models + background ingestion
+    plan: free # Render free tier web service (512MB RAM)
     healthCheckPath: /health
     autoDeploy: true
     envVars:
