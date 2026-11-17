@@ -89,7 +89,7 @@ class Settings(BaseSettings):
 
     # Retrieval Quality
     DUAL_ENGINE_RAG_EMBEDDING_MODEL: str = Field(default="BAAI/bge-m3", validation_alias=AliasChoices("DUAL_ENGINE_RAG_EMBEDDING_MODEL", "NEXUSRAG_EMBEDDING_MODEL"))
-    DUAL_ENGINE_RAG_RERANKER_MODEL: str = Field(default="BAAI/bge-reranker-v2-m3", validation_alias=AliasChoices("DUAL_ENGINE_RAG_RERANKER_MODEL", "NEXUSRAG_RERANKER_MODEL"))
+    DUAL_ENGINE_RAG_RERANKER_MODEL: str = Field(default="none", validation_alias=AliasChoices("DUAL_ENGINE_RAG_RERANKER_MODEL", "NEXUSRAG_RERANKER_MODEL"))
     DUAL_ENGINE_RAG_VECTOR_PREFETCH: int = Field(default=20, validation_alias=AliasChoices("DUAL_ENGINE_RAG_VECTOR_PREFETCH", "NEXUSRAG_VECTOR_PREFETCH"))
     DUAL_ENGINE_RAG_RERANKER_TOP_K: int = Field(default=8, validation_alias=AliasChoices("DUAL_ENGINE_RAG_RERANKER_TOP_K", "NEXUSRAG_RERANKER_TOP_K"))
     DUAL_ENGINE_RAG_MIN_RELEVANCE_SCORE: float = Field(default=0.15, validation_alias=AliasChoices("DUAL_ENGINE_RAG_MIN_RELEVANCE_SCORE", "NEXUSRAG_MIN_RELEVANCE_SCORE"))

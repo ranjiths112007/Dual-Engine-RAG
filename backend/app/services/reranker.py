@@ -73,6 +73,16 @@ class RerankerService:
         if not documents:
             return []
 
+        # Fast path: if reranker is disabled, return original order immediately (no model download)
+        if not self.model_name or self.model_name.lower() in ("none", "disabled", "off"):
+            results = [
+                RerankResult(index=i, score=1.0 / (i + 1.0), text=doc)
+                for i, doc in enumerate(documents)
+            ]
+            if top_k is not None:
+                results = results[:top_k]
+            return results
+
         # Build (query, document) pairs for the cross-encoder
         pairs = [(query, doc) for doc in documents]
 
