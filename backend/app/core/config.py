@@ -199,7 +199,7 @@ class Settings(BaseSettings):
         return self.DUAL_ENGINE_RAG_MIN_RELEVANCE_SCORE
 
     # CORS
-    CORS_ORIGINS: list[str] = ["http://localhost:5174", "http://localhost:3000"]
+    CORS_ORIGINS: Any = ["http://localhost:5174", "http://localhost:3000"]
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
