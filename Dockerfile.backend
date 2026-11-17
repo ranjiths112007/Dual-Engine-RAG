@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
+# Pre-install lightweight CPU-only PyTorch (saves ~2.6GB disk space on builder)
+RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu torch torchvision
+
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
