@@ -1,4 +1,7 @@
-export const BASE_URL = import.meta.env.VITE_API_URL || "/api/v1";
+const rawUrl = import.meta.env.VITE_API_URL;
+export const BASE_URL = rawUrl
+  ? (rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}/api/v1`)
+  : "/api/v1";
 
 class ApiClient {
   private async request<T>(path: string, options?: RequestInit): Promise<T> {

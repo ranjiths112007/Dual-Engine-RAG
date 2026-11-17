@@ -10,7 +10,7 @@ version: "1"
 databases:
   - name: dual-engine-rag-db
     databaseName: dual_engine_rag
-    user: postgres
+    user: dual_engine_user
     plan: starter # Render free database expires after 30 days; starter ($7/mo) is persistent
 
 services:
@@ -68,4 +68,4 @@ services:
         fromService:
           type: web
           name: dual-engine-rag-backend
-          property: url
+          property: host
