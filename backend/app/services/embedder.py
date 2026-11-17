@@ -37,28 +37,54 @@ class EmbeddingService:
 
     @property
     def model(self):
-        """Lazy load the model."""
+        """Lazy load the model (cloud Gemini or local sentence-transformers)."""
         if self._model is None:
-            from sentence_transformers import SentenceTransformer
-            logger.info(f"Loading embedding model: {self.model_name}")
-            self._model = SentenceTransformer(self.model_name)
-            logger.info(
-                f"Embedding model loaded: {self.model_name} "
-                f"(dim={self._model.get_sentence_embedding_dimension()})"
-            )
+            if settings.LLM_PROVIDER == "gemini" and settings.GOOGLE_AI_API_KEY:
+                from app.services.llm.gemini import GeminiEmbeddingProvider
+                logger.info(f"Using cloud GeminiEmbeddingProvider ({settings.KG_EMBEDDING_MODEL})")
+                self._model = GeminiEmbeddingProvider(
+                    api_key=settings.GOOGLE_AI_API_KEY,
+                    model=settings.KG_EMBEDDING_MODEL,
+                )
+                return self._model
+            try:
+                from sentence_transformers import SentenceTransformer
+                logger.info(f"Loading embedding model: {self.model_name}")
+                self._model = SentenceTransformer(self.model_name)
+                logger.info(
+                    f"Embedding model loaded: {self.model_name} "
+                    f"(dim={self._model.get_sentence_embedding_dimension()})"
+                )
+            except Exception as e:
+                if settings.GOOGLE_AI_API_KEY:
+                    logger.warning(f"Could not load SentenceTransformer ({e}); falling back to Gemini")
+                    from app.services.llm.gemini import GeminiEmbeddingProvider
+                    self._model = GeminiEmbeddingProvider(
+                        api_key=settings.GOOGLE_AI_API_KEY,
+                        model=settings.KG_EMBEDDING_MODEL,
+                    )
+                else:
+                    raise
         return self._model
 
     @property
     def dimension(self) -> int:
         """Return the embedding dimension size."""
-        if self._model is not None:
+        if hasattr(self._model, "get_dimension"):
+            return self._model.get_dimension()
+        if hasattr(self._model, "get_sentence_embedding_dimension"):
             return self._model.get_sentence_embedding_dimension()
+        if settings.LLM_PROVIDER == "gemini":
+            return settings.KG_EMBEDDING_DIMENSION
         return self._KNOWN_DIMS.get(self.model_name, 1024)
 
     def embed_text(self, text: str) -> list[float]:
         """Generate embedding for a single text."""
         if not text.strip():
             raise ValueError("Cannot embed empty text")
+        if hasattr(self.model, "embed_sync"):
+            arr = self.model.embed_sync([text])
+            return arr[0].tolist()
         embedding = self.model.encode(
             text,
             convert_to_numpy=True,
@@ -73,6 +99,9 @@ class EmbeddingService:
         valid_texts = [t for t in texts if t.strip()]
         if not valid_texts:
             raise ValueError("All texts are empty")
+        if hasattr(self.model, "embed_sync"):
+            arr = self.model.embed_sync(valid_texts)
+            return arr.tolist()
         embeddings = self.model.encode(
             valid_texts,
             convert_to_numpy=True,

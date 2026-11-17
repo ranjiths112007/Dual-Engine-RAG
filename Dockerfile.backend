@@ -18,14 +18,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-# Stage 2: Pre-download ML models (~2.5GB, cached as Docker layer)
-FROM deps AS models
-
-COPY backend/scripts/download_models.py /tmp/download_models.py
-RUN python /tmp/download_models.py
-
-
-# Stage 3: Runtime image
+# Stage 2: Runtime image
 FROM python:3.11-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -40,9 +33,6 @@ WORKDIR /app/backend
 # Copy installed packages from deps stage
 COPY --from=deps /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=deps /usr/local/bin /usr/local/bin
-
-# Copy pre-downloaded models from models stage
-COPY --from=models /root/.cache/huggingface /root/.cache/huggingface
 
 # Copy backend source
 COPY backend/ .

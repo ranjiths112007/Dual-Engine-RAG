@@ -76,8 +76,12 @@ class RerankerService:
         # Build (query, document) pairs for the cross-encoder
         pairs = [(query, doc) for doc in documents]
 
-        # Score all pairs in a single batch
-        scores = self.model.predict(pairs, batch_size=32).tolist()
+        # Score all pairs; gracefully degrade if memory-constrained
+        try:
+            scores = self.model.predict(pairs, batch_size=32).tolist()
+        except Exception as e:
+            logger.warning(f"CrossEncoder unavailable ({e}); applying reciprocal rank scoring fallback")
+            scores = [1.0 / (idx + 1.0) for idx in range(len(documents))]
 
         # Build results with original indices
         results = [
