@@ -1,0 +1,71 @@
+# ============================================================
+# Render Blueprint — Dual-Engine RAG
+# Deploys:
+#   1. PostgreSQL Database
+#   2. FastAPI Backend (Web Service / Docker)
+#   3. Vite React Frontend (Static Site / Free Tier)
+# ============================================================
+version: "1"
+
+databases:
+  - name: dual-engine-rag-db
+    databaseName: dual_engine_rag
+    user: postgres
+    plan: starter # Render free database expires after 30 days; starter ($7/mo) is persistent
+
+services:
+  # ------------------------------------------------------------
+  # Backend API Service
+  # ------------------------------------------------------------
+  - type: web
+    name: dual-engine-rag-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile.backend
+    dockerContext: .
+    plan: starter # 2GB RAM minimum for embedding models + background ingestion
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dual-engine-rag-db
+          property: connectionString
+      - key: CHROMA_HOST
+        value: embedded
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: LLM_MODEL_FAST
+        value: gemini-3.1-flash-lite
+      - key: KG_EMBEDDING_PROVIDER
+        value: gemini
+      - key: KG_EMBEDDING_MODEL
+        value: gemini-embedding-001
+      - key: KG_EMBEDDING_DIMENSION
+        value: "3072"
+      - key: GOOGLE_AI_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: AUTO_CREATE_TABLES
+        value: "true"
+
+  # ------------------------------------------------------------
+  # Frontend Static Site
+  # ------------------------------------------------------------
+  - type: web
+    name: dual-engine-rag-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: pnpm install && pnpm build
+    staticPublishPath: dist
+    pullRequestPreviewsEnabled: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: dual-engine-rag-backend
+          property: url

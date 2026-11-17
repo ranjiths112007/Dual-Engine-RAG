@@ -17,22 +17,33 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Global ChromaDB client
-_chroma_client: Optional[chromadb.HttpClient] = None
+_chroma_client: Optional[chromadb.ClientAPI] = None
 
 
-def get_chroma_client() -> chromadb.HttpClient:
-    """Get or create the ChromaDB client singleton."""
+def get_chroma_client() -> chromadb.ClientAPI:
+    """Get or create the ChromaDB client singleton (supports HTTP or embedded)."""
     global _chroma_client
 
     if _chroma_client is None:
-        logger.info(f"Connecting to ChromaDB at {settings.CHROMA_HOST}:{settings.CHROMA_PORT}")
-        _chroma_client = chromadb.HttpClient(
-            host=settings.CHROMA_HOST,
-            port=settings.CHROMA_PORT,
-            settings=ChromaSettings(
-                anonymized_telemetry=False,
+        host = (settings.CHROMA_HOST or "").strip().lower()
+        if host in ("embedded", "local", "", "none"):
+            persist_dir = str(settings.BASE_DIR.parent / "chroma_data")
+            logger.info(f"Using embedded ChromaDB at {persist_dir}")
+            _chroma_client = chromadb.PersistentClient(
+                path=persist_dir,
+                settings=ChromaSettings(
+                    anonymized_telemetry=False,
+                )
             )
-        )
+        else:
+            logger.info(f"Connecting to ChromaDB at {settings.CHROMA_HOST}:{settings.CHROMA_PORT}")
+            _chroma_client = chromadb.HttpClient(
+                host=settings.CHROMA_HOST,
+                port=settings.CHROMA_PORT,
+                settings=ChromaSettings(
+                    anonymized_telemetry=False,
+                )
+            )
         # Test connection
         _chroma_client.heartbeat()
         logger.info("Connected to ChromaDB successfully")

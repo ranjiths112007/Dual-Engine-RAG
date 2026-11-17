@@ -5,8 +5,11 @@ import os
 import tempfile
 from pathlib import Path
 
-# Ensure AI models and temp files use drive D: where ample space exists
-_CACHE_ROOT = Path("D:/ai_cache")
+# Ensure AI models and temp files use appropriate cache directory
+if os.name == "nt" and Path("D:/").exists():
+    _CACHE_ROOT = Path("D:/ai_cache")
+else:
+    _CACHE_ROOT = Path(tempfile.gettempdir()) / "ai_cache"
 for _k, _p in [
     ("TEMP", _CACHE_ROOT / "temp"),
     ("TMP", _CACHE_ROOT / "temp"),
