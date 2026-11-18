@@ -229,10 +229,14 @@ async def process_document(
     file_path = Path(UPLOAD_DIR) / document.filename
 
     if not file_path.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document file not found on disk"
-        )
+        if document.markdown_content:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text(document.markdown_content, encoding="utf-8")
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Document file not found on disk. Please re-upload the document."
+            )
 
     # Mark as processing immediately so UI updates
     document.status = DocumentStatus.PROCESSING
@@ -344,10 +348,14 @@ async def reindex_document(
     file_path = Path(UPLOAD_DIR) / document.filename
 
     if not file_path.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Document file not found on disk"
-        )
+        if document.markdown_content:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text(document.markdown_content, encoding="utf-8")
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Document file not found on disk. Please re-upload the document."
+            )
 
     rag_service = get_rag_service(db, document.workspace_id)
 
@@ -1079,7 +1087,7 @@ async def chat_with_documents(
         "Example: 'ROE, 2023 = 12,8%' means ROE was 12.8% in 2023. "
         "Extract and report these values.\n"
         "- If no source contains relevant information, say: "
-        "\"Tài liệu không chứa thông tin này.\"\n"
+        "\"The provided documents do not contain information to answer this question.\"\n"
     )
 
     # 4. Conversation context recap (if history exists)
@@ -1319,7 +1327,7 @@ async def debug_chat(
         "- Only say information is unavailable when you have checked ALL sources "
         "and none contains the answer.\n"
         "- If no source is relevant at all, say: "
-        "\"Tài liệu không chứa thông tin này.\" without any citations.\n"
+        "\"The provided documents do not contain information to answer this question.\" without any citations.\n"
         "- Answer in the same language as my question.\n"
     )
 

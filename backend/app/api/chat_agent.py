@@ -542,7 +542,7 @@ async def agent_chat_stream(
                 "- TABLE DATA: Sources may contain table data as 'Key, Year = Value' pairs. "
                 "Example: 'ROE, 2023 = 12,8%' means ROE was 12.8% in 2023.\n"
                 "- If no source contains relevant information, say: "
-                "\"Tài liệu không chứa thông tin này.\"\n",
+                "\"The provided documents do not contain information to answer this question.\"\n",
             ]
             tool_result_content = "\n".join(tool_result_parts)
 
@@ -846,7 +846,7 @@ async def agent_chat_stream(
                 "- Include ALL relevant images [IMG-xxxx], tables, math formulas, "
                 "and code snippets from sources.\n"
                 "- If no source contains relevant information, say: "
-                "\"Tài liệu không chứa thông tin này.\"\n",
+                "\"The provided documents do not contain information to answer this question.\"\n",
             ]
             fallback_content = "\n".join(fallback_parts)
             fallback_content += f"\n\nNow answer the question: {message}"
