@@ -42,8 +42,8 @@ export function KnowledgeBasesPage() {
       setNewWorkspaceName("");
       setShowNewWorkspace(false);
       navigate(`/knowledge-bases/${ws.id}`);
-    } catch {
-      toast.error("Failed to create knowledge base");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to create knowledge base");
     }
   };
 
