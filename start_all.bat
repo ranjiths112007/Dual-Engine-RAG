@@ -29,14 +29,14 @@ echo [3/4] Starting ChromaDB on port 8002...
 start "ChromaDB (Port 8002)" cmd /k ".\venv\Scripts\chroma.exe run --path .\chroma_data --port 8002"
 
 echo [4/4] Starting Backend & Frontend...
-start "Backend API (Port 8080)" cmd /k "powershell -ExecutionPolicy Bypass -File .\run_bk.ps1"
+start "Backend API (Port 8500)" cmd /k "powershell -ExecutionPolicy Bypass -File .\run_bk.ps1"
 start "Frontend UI (Port 5174)" cmd /k "powershell -ExecutionPolicy Bypass -File .\run_fe.ps1"
 
 echo.
 echo ======================================================
 echo   All Dual-Engine RAG services started successfully!
 echo   Frontend:  http://localhost:5174
-echo   API Docs:  http://localhost:8080/docs
+echo   API Docs:  http://localhost:8500/docs
 echo ======================================================
 echo.
 

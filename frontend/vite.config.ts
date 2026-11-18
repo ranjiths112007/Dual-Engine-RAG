@@ -15,11 +15,11 @@ export default defineConfig({
     port: 5174,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8080',
+        target: 'http://127.0.0.1:8500',
         changeOrigin: true,
       },
       '/static': {
-        target: 'http://127.0.0.1:8080',
+        target: 'http://127.0.0.1:8500',
         changeOrigin: true,
       },
     },

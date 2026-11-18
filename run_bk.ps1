@@ -1,4 +1,4 @@
-# Start FastAPI backend (port 8080)
+# Start FastAPI backend (port 8500)
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 if (-not (Test-Path "$SCRIPT_DIR\venv\Scripts\uvicorn.exe")) {
@@ -37,5 +37,5 @@ if (-not $pgAlive) {
 }
 
 Set-Location "$SCRIPT_DIR\backend"
-Write-Host "Starting Dual-Engine RAG backend on port 8080..." -ForegroundColor Cyan
-& "$SCRIPT_DIR\venv\Scripts\uvicorn.exe" app.main:app --reload --port 8080
+Write-Host "Starting Dual-Engine RAG backend on port 8500..." -ForegroundColor Cyan
+& "$SCRIPT_DIR\venv\Scripts\uvicorn.exe" app.main:app --reload --port 8500
